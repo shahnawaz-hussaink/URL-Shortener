@@ -23,7 +23,7 @@ const creatShortURL = asyncHandler(async (req, res) => {
   });
 
   if (!url) {
-    throw new apiError(200, 'Something went wrong while saving the URL');
+    throw new apiError(200, 'Something went wrong while saving the URLs');
   }
 
   return res
@@ -38,14 +38,14 @@ const redirectURL = asyncHandler(async (req, res) => {
   }
 
   const url = await Url.findOneAndUpdate(
-    {shortURL},
-    { $inc: { count: 1 } },
+    { shortURL },
+    { $inc: { clicks: 1 } },
     {
       new: true,
     },
   );
 
-  console.log(url)
+  console.log(url);
 
   if (!url) {
     throw new apiError(400, 'SHORT URL NOT FOUND');
@@ -54,4 +54,20 @@ const redirectURL = asyncHandler(async (req, res) => {
   return res.redirect(url.originalURL);
 });
 
-export { creatShortURL, redirectURL };
+const getClickCounts = asyncHandler(async (req, res) => {
+  const { shortURL } = req.params;
+  if (!shortURL) {
+    throw new apiError(400, 'No Short URL found in Params!!');
+  }
+  const url = await Url.findOne({ shortURL });
+
+  if (!url) {
+    throw new apiError(404, 'SHORT URL NOT FOUND');
+  }
+
+  return res
+    .status(200)
+    .json(new apiResponse(200, {clickCounts : url.clicks}, 'Fetched Clicked Successfully'));
+});
+
+export { creatShortURL, redirectURL ,getClickCounts};

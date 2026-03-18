@@ -9,7 +9,7 @@ const urlSchema = new mongoose.Schema(
     shortURL: {
       type: String,
     },
-    count: {
+    clicks: {
       type: Number,
       default : 0
     },

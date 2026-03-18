@@ -11,6 +11,7 @@ const urlSchema = new mongoose.Schema(
     },
     count: {
       type: Number,
+      default : 0
     },
   },
   {

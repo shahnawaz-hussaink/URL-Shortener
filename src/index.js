@@ -1,5 +1,20 @@
-import { app } from "./app.js";
+import { app } from './app.js';
+import dbConnect from './db/index.js';
+import dotenv from 'dotenv';
 
-app.listen(8080, () => {
-  console.log("App Is listening");
-});
+dotenv.config({ path: './.env' });
+
+const port = process.env.PORT;
+
+console.log('Hell');
+console.log(port);
+
+dbConnect()
+  .then((res) => {
+    app.listen(port || 3000, () => {
+      console.log(`App Is listening on Port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.log('Backend failed while listening on PORT!!!');
+  });

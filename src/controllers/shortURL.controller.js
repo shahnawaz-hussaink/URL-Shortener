@@ -1,17 +1,41 @@
 import { Url } from '../models/url.model.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { apiResponse } from '../utils/apiResponse.js';
+import { apiError } from '../utils/apiError.js';
+import { nanoid } from 'nanoid';
 
-const shortURL = asyncHandler(async (req, res) => {
+const creatShortURL = asyncHandler(async (req, res) => {
+  const {originalURL} = req.body 
+
+  if (!originalURL) {
+    throw new apiError(400, 'All fields required');
+  }
+
+
+  let shortURL = nanoid();
+
+  while(await Url.findOne({shortURL})){
+    shortURL = nanoid()
+  }
+
+//   const url = await Url.create({
+//     originalURL,shortURL
+//   });
+
+//   if(!url){
+//     throw new apiError(200,"Something went wrong while saving the URL")
+//   }
+console.log(req.body)
+
   return res
     .status(200)
     .json(
       new apiResponse(
         200,
-        { data: 'will start working on this' },
+        {shortURL:shortURL},
         'successfull',
       ),
     );
 });
 
-export { shortURL };
+export { creatShortURL };

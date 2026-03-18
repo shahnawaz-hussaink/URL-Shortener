@@ -26,9 +26,10 @@ app.use(
     size: '16kb',
   }),
 );
+// routes 
 
-app.get('/', (req, res) => {
-  res.send('<h1>URL Shortener</h1>');
-});
+import urlShortener from './routes/urlShortener.route.js'
+
+app.use("/api/v1/url",urlShortener)
 
 export { app };

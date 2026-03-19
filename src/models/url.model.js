@@ -11,7 +11,17 @@ const urlSchema = new mongoose.Schema(
     },
     clicks: {
       type: Number,
-      default : 0
+      default: 0,
+    },
+    owner: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    customSlug: {
+      type: String,
+    },
+    expireAt: {
+      type: Date,
     },
   },
   {

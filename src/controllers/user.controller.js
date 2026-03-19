@@ -3,6 +3,7 @@ import { apiError } from '../utils/apiError.js';
 import { apiResponse } from '../utils/apiResponse.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
 import { generateRefreshAndAccessToken } from '../utils/generateRefreshAndAccessToken.js';
+import jwt from 'jsonwebtoken';
 
 const registerUser = asyncHandler(async (req, res) => {
   const { username, emailId, fullname, password } = req.body;
@@ -117,4 +118,61 @@ const logoutUser = asyncHandler(async (req, res) => {
     );
 });
 
-export { registerUser, loginUser, logoutUser };
+const regenerateAccessToken = asyncHandler(async (req, res) => {
+  const gotRefreshToken = req.cookies.refreshToken || req.body.refreshToken;
+
+  if (!gotRefreshToken) {
+    throw new apiError(401, 'Invalid refresh token');
+  }
+
+  try {
+    const decodedToken = jwt.verify(
+      gotRefreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+    );
+
+    if (!decodedToken) {
+      throw new apiError(400, 'refresh Token not matching to the cookie token');
+    }
+
+    const user = await User.findById(decodedToken._id);
+
+
+    if (!user) {
+      throw new apiError(400, 'Invalid Refresh Token, user not found');
+    }
+
+    if (gotRefreshToken !== user?.refreshToken) { 
+      throw new apiError(400, 'Refresh token is expired or used');
+    }
+
+    const { accessToken, refreshToken : newRefreshToken } = await generateRefreshAndAccessToken(
+      decodedToken._id,
+    );
+
+
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+    return res
+      .status(200)
+      .cookie('accessToken', accessToken, options)
+      .cookie('refreshToken', newRefreshToken, options)
+      .json(
+        new apiResponse(
+          200,
+          { refreshToken:newRefreshToken, accessToken },
+          'Successfully generated Tokens',
+        ),
+      );
+  } catch (error) {
+    throw new apiError(
+      400,
+      error.message ||
+        'Somehting went wrong while verifying the refresh token ',
+    );
+  }
+});
+
+export { registerUser, loginUser, logoutUser, regenerateAccessToken };

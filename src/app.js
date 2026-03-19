@@ -1,5 +1,6 @@
 import express, { urlencoded } from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -26,6 +27,8 @@ app.use(
     size: '16kb',
   }),
 );
+
+app.use(cookieParser())
 
 
 // routes importing

@@ -6,8 +6,6 @@ dotenv.config({ path: './.env' });
 
 const port = process.env.PORT;
 
-console.log('Hell');
-console.log(port);
 
 dbConnect()
   .then((res) => {

@@ -6,12 +6,11 @@ import { generateRefreshAndAccessToken } from '../utils/generateRefreshAndAccess
 
 const registerUser = asyncHandler(async (req, res) => {
   const { username, emailId, fullname, password } = req.body;
-  console.log(`${username} \n ${emailId} \n ${fullname} \n ${password}`);
   if (!(username && emailId && fullname && password)) {
     throw new apiError(400, 'All fields are required!!!');
   }
 
-  const existedUser = await User.findOne({ $or: [{ emailId, username }] });
+  const existedUser = await User.findOne({ $or: [{ emailId }, { username }] });
 
   if (existedUser) {
     throw new apiError(400, 'User already exists');
@@ -31,7 +30,6 @@ const registerUser = asyncHandler(async (req, res) => {
   if (!user) {
     throw new apiError(500, 'Somethign went wrong while user registration');
   }
-  console.log(user);
 
   return res
     .status(200)
@@ -40,7 +38,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
 const loginUser = asyncHandler(async (req, res) => {
   const { emailId, username, password } = req.body;
-  if (!(emailId && username && password)) {
+  if (!((emailId || username) && password)) {
     throw new apiError(400, 'All fields are required to login');
   }
 
@@ -86,8 +84,37 @@ const loginUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .cookie('accessToken', accessToken, options)
-    .cookie('refreshToken', accessToken, options)
+    .cookie('refreshToken', refreshToken, options)
     .json(new apiResponse(200, loggedInUser, 'User logged in successfully!'));
 });
 
-export { registerUser,loginUser };
+const logoutUser = asyncHandler(async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user?._id,
+    {
+      $unset: {
+        refreshToken: 1,
+      },
+    },
+    { new: true },
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie('accessToken', options)
+    .clearCookie('refreshToken', options)
+    .json(
+      new apiResponse(
+        200,
+        { username: req.user?.username },
+        'User loggedOut successfully!!',
+      ),
+    );
+});
+
+export { registerUser, loginUser, logoutUser };

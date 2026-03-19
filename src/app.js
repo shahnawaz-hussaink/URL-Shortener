@@ -26,10 +26,17 @@ app.use(
     size: '16kb',
   }),
 );
-// routes 
 
-import urlShortener from './routes/urlShortener.route.js'
 
-app.use("/api/v1/url",urlShortener)
+// routes importing
+
+import urlShortenerRoute from './routes/urlShortener.route.js'
+import userRoute from './routes/user.route.js'
+
+app.use("/api/v1/url",urlShortenerRoute)
+
+app.use("/api/v1/user",userRoute)
+
+
 
 export { app };

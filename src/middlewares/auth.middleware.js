@@ -1,13 +1,13 @@
-import { User } from '../models/user.model';
-import { apiError } from '../utils/apiError';
-import { asyncHandler } from '../utils/asyncHandler';
+import { User } from '../models/user.model.js';
+import { apiError } from '../utils/apiError.js';
+import { asyncHandler } from '../utils/asyncHandler.js';
 
 const verifyToken = asyncHandler(async (req, res, next) => {
   try {
     const token =
       req.cookies?.accesToken ||
       req.header('Authorization')?.replace('Bearer', '');
-    console.log(token);
+    console.log(token, 'From auth middleware');
 
     if (!token) {
       throw new apiError(400, 'Unauthorized request failed');
@@ -26,10 +26,10 @@ const verifyToken = asyncHandler(async (req, res, next) => {
     }
 
     req.user = user;
-    next();
+    next;
   } catch (error) {
     throw new apiError(401, error?.message || 'Invalid Access Token');
   }
 });
 
-export {verifyToken}
+export { verifyToken };

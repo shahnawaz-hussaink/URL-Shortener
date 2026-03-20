@@ -137,19 +137,16 @@ const regenerateAccessToken = asyncHandler(async (req, res) => {
 
     const user = await User.findById(decodedToken._id);
 
-
     if (!user) {
       throw new apiError(400, 'Invalid Refresh Token, user not found');
     }
 
-    if (gotRefreshToken !== user?.refreshToken) { 
+    if (gotRefreshToken !== user?.refreshToken) {
       throw new apiError(400, 'Refresh token is expired or used');
     }
 
-    const { accessToken, refreshToken : newRefreshToken } = await generateRefreshAndAccessToken(
-      decodedToken._id,
-    );
-
+    const { accessToken, refreshToken: newRefreshToken } =
+      await generateRefreshAndAccessToken(decodedToken._id);
 
     const options = {
       httpOnly: true,
@@ -162,7 +159,7 @@ const regenerateAccessToken = asyncHandler(async (req, res) => {
       .json(
         new apiResponse(
           200,
-          { refreshToken:newRefreshToken, accessToken },
+          { refreshToken: newRefreshToken, accessToken },
           'Successfully generated Tokens',
         ),
       );
@@ -175,4 +172,33 @@ const regenerateAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, loginUser, logoutUser, regenerateAccessToken };
+// change password
+
+const changePassword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword) {
+    throw new apiError(400, 'Password field is empty');
+  }
+
+  const user = await User.findById(req.user?._id);
+  if (!user) {
+    throw new apiError(400, 'Invalid Call to update password');
+  }
+
+  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+
+  if (!isPasswordValid) {
+    throw new apiError(400, 'Wrong password, check password');
+  }
+
+  user.password = newPassword;
+  await user.save({ validateBeforeSave: true });
+
+  return res
+    .status(200)
+    .json(new apiResponse(200, {}, 'Password Changed successfully'));
+});
+// get user
+// update user details
+
+export { registerUser, loginUser, logoutUser, regenerateAccessToken ,changePassword};

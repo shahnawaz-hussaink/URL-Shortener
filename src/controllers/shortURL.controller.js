@@ -20,7 +20,7 @@ const creatShortURL = asyncHandler(async (req, res) => {
   const url = await Url.create({
     originalURL,
     shortURL,
-    owner : req.user?._id || null 
+    owner: req.user?._id || null,
   });
 
   if (!url) {
@@ -68,7 +68,13 @@ const getClickCounts = asyncHandler(async (req, res) => {
 
   return res
     .status(200)
-    .json(new apiResponse(200, {clickCounts : url.clicks}, 'Fetched Clicked Successfully'));
+    .json(
+      new apiResponse(
+        200,
+        { clickCounts: url.clicks },
+        'Fetched Clicked Successfully',
+      ),
+    );
 });
 
-export { creatShortURL, redirectURL ,getClickCounts};
+export { creatShortURL, redirectURL, getClickCounts };

@@ -28,18 +28,15 @@ app.use(
   }),
 );
 
-app.use(cookieParser())
-
+app.use(cookieParser());
 
 // routes importing
 
-import urlShortenerRoute from './routes/urlShortener.route.js'
-import userRoute from './routes/user.route.js'
+import urlShortenerRoute from './routes/urlShortener.route.js';
+import userRoute from './routes/user.route.js';
 
-app.use("/api/v1/url",urlShortenerRoute)
+app.use('/api/v1/url', urlShortenerRoute);
 
-app.use("/api/v1/user",userRoute)
-
-
+app.use('/api/v1/user', userRoute);
 
 export { app };

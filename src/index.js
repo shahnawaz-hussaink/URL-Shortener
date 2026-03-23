@@ -6,7 +6,6 @@ dotenv.config({ path: './.env' });
 
 const port = process.env.PORT;
 
-
 dbConnect()
   .then((res) => {
     app.listen(port || 3000, () => {

@@ -4,11 +4,11 @@ import { apiError } from './apiError.js';
 const generateRefreshAndAccessToken = async (userId) => {
   try {
     const user = await User.findById(userId);
-    if(!user){
-      throw new apiError(400,"NO userId")
+    if (!user) {
+      throw new apiError(400, 'NO userId');
     }
-    const accessToken =  user.generateAccessToken();
-    const refreshToken =  user.generateRefreshToken();
+    const accessToken = user.generateAccessToken();
+    const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
 
@@ -16,8 +16,11 @@ const generateRefreshAndAccessToken = async (userId) => {
 
     return { refreshToken, accessToken };
   } catch (error) {
-    throw new apiError(500, error.message || 'Something went wrong while generating Tokens!!!');
+    throw new apiError(
+      500,
+      error.message || 'Something went wrong while generating Tokens!!!',
+    );
   }
 };
 
-export {generateRefreshAndAccessToken}
+export { generateRefreshAndAccessToken };

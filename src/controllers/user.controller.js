@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { User } from '../models/user.model.js';
-import {Url} from '../models/url.model.js';
+import { Url } from '../models/url.model.js';
 import { apiError } from '../utils/apiError.js';
 import { apiResponse } from '../utils/apiResponse.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -214,14 +214,14 @@ const getAllUserUrl = asyncHandler(async (req, res) => {
   const userId = req.user?._id;
 
   if (!userId) {
-    throw new apiError(401, "Unauthorized");
+    throw new apiError(401, 'Unauthorized');
   }
 
   const allUserUrls = await Url.find({ owner: userId });
 
-  return res.status(200).json(
-    new apiResponse(200, allUserUrls, 'Got user urls successfully')
-  );
+  return res
+    .status(200)
+    .json(new apiResponse(200, allUserUrls, 'Got user urls successfully'));
 });
 
 export {
@@ -231,5 +231,5 @@ export {
   regenerateAccessToken,
   changePassword,
   getUser,
-  getAllUserUrl
+  getAllUserUrl,
 };

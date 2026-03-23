@@ -1,4 +1,6 @@
+import mongoose from 'mongoose';
 import { User } from '../models/user.model.js';
+import {Url} from '../models/url.model.js';
 import { apiError } from '../utils/apiError.js';
 import { apiResponse } from '../utils/apiResponse.js';
 import { asyncHandler } from '../utils/asyncHandler.js';
@@ -200,12 +202,34 @@ const changePassword = asyncHandler(async (req, res) => {
 });
 
 // get user
-const getUser = asyncHandler(async(req,res)=>{
-  return res.status(200).json(new apiResponse(200,req.user,"Got user successfully"))
+const getUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new apiResponse(200, req.user, 'Got user successfully'));
 });
-
 
 // get all url of user created till data
 
+const getAllUserUrl = asyncHandler(async (req, res) => {
+  const userId = req.user?._id;
 
-export { registerUser, loginUser, logoutUser, regenerateAccessToken ,changePassword,getUser};
+  if (!userId) {
+    throw new apiError(401, "Unauthorized");
+  }
+
+  const allUserUrls = await Url.find({ owner: userId });
+
+  return res.status(200).json(
+    new apiResponse(200, allUserUrls, 'Got user urls successfully')
+  );
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  regenerateAccessToken,
+  changePassword,
+  getUser,
+  getAllUserUrl
+};

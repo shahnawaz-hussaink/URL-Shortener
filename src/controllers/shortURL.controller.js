@@ -20,6 +20,7 @@ const creatShortURL = asyncHandler(async (req, res) => {
   const url = await Url.create({
     originalURL,
     shortURL,
+    owner : req.user?._id || null 
   });
 
   if (!url) {

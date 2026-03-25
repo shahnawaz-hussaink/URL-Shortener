@@ -6,6 +6,8 @@ import { nanoid } from 'nanoid';
 
 const creatShortURL = asyncHandler(async (req, res) => {
   const { originalURL } = req.body;
+  const ip = req.headers['x-forwarded-for']?.split(",").trim() || req.connection.remoteAddress ;
+  
 
   if (!originalURL) {
     throw new apiError(400, 'All fields required');
@@ -21,6 +23,7 @@ const creatShortURL = asyncHandler(async (req, res) => {
     originalURL,
     shortURL,
     owner: req.user?._id || null,
+    ipAddress : ip || null
   });
 
   if (!url) {
@@ -45,8 +48,6 @@ const redirectURL = asyncHandler(async (req, res) => {
       new: true,
     },
   );
-
-  console.log(url);
 
   if (!url) {
     throw new apiError(400, 'SHORT URL NOT FOUND');
@@ -76,5 +77,7 @@ const getClickCounts = asyncHandler(async (req, res) => {
       ),
     );
 });
+
+
 
 export { creatShortURL, redirectURL, getClickCounts };

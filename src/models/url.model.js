@@ -23,6 +23,10 @@ const urlSchema = new mongoose.Schema(
     expireAt: {
       type: Date,
     },
+    ipAddress : {
+      type : String,
+      required : true
+    }
   },
   {
     timestamps: true,

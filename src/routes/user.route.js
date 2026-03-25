@@ -3,6 +3,7 @@ import {
   changePassword,
   getAllUserUrl,
   getUser,
+  getUserIpAdress,
   loginUser,
   logoutUser,
   regenerateAccessToken,
@@ -19,4 +20,5 @@ router.route('/refresh-token').patch(verifyToken, regenerateAccessToken);
 router.route('/change-password').patch(verifyToken, changePassword);
 router.route('/get-user').get(verifyToken, getUser);
 router.route('/get-all-urls').get(verifyToken, getAllUserUrl);
+router.route('/get-ip').get(verifyToken,getUserIpAdress)
 export default router;

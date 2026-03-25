@@ -224,6 +224,14 @@ const getAllUserUrl = asyncHandler(async (req, res) => {
     .json(new apiResponse(200, allUserUrls, 'Got user urls successfully'));
 });
 
+const getUserIpAdress = asyncHandler(async (req, res) => {
+  const ipAddress =
+    req.headers['x-forwarded-for']?.split(",")[0].trim() || req.connection.remoteAddress
+  return res
+    .status(200)
+    .json(new apiResponse(200, ipAddress, 'Fetched Ip Address successfully'));
+});
+
 export {
   registerUser,
   loginUser,
@@ -232,4 +240,5 @@ export {
   changePassword,
   getUser,
   getAllUserUrl,
+  getUserIpAdress,
 };
